@@ -1,0 +1,17 @@
+# Reference-only theme source (never an implementation source, licensed assets)
+OLD-theme/
+
+# OS
+.DS_Store
+
+# Next.js / Node (Phase 2+)
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Env
+.env
+.env*.local
