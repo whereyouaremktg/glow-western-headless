@@ -3,7 +3,7 @@
 **Source of truth for this project.** Update at every phase boundary.
 Companion doc: `MIGRATION-REPORT.md` (Phase 1 theme audit — old-theme inventory & classification).
 
-**Status:** Phase 1 complete (audit + spec). No application code yet.
+**Status:** Phase 2 complete (foundation). App scaffolded; Shopify client + UI primitives ready. Live API verification pending `.env.local` credentials.
 
 ---
 
@@ -260,7 +260,17 @@ creator/affiliate pages, blog, shoppable look, routine grid, press logos, UGC gr
 ## 11. Phase log
 
 - **Phase 1 ✅** — Theme audit complete → `MIGRATION-REPORT.md`; this spec written. No app code.
-- Phase 2 — Foundation: scaffold, `lib/shopify`, tokens, ui primitives, live fetch verification
+- **Phase 2 ✅** — Foundation:
+  - Next.js 15 App Router scaffold (TypeScript strict, Tailwind v4, ESLint, Vercel Analytics + Speed Insights)
+  - `/types` — all shared domain interfaces (commerce, cart, customer, section props, v2 extension points)
+  - `lib/shopify/` — Storefront API `2025-04` client, typed fragments, queries, mappers, cart mutations; `verifyStorefrontConnection()` smoke test
+  - `lib/config.ts` — commerce config (free-shipping $50, badge tags, swatch/chip options, excluded handles)
+  - Design tokens in `app/globals.css` + Gotham Ultra via `next/font/local` (`app/fonts/gotham-ultra.otf`); Proxima Nova pending licensed woff2
+  - UI primitives: `Button`, `Input`, `Card`, `Badge`, `Price`, `ProductCard`, `ReviewStars` (+ shadcn `components.json`)
+  - Foundation page at `/` showcases tokens, primitives, and Shopify connection status
+  - `.env.example` created; `next.config.ts` images.remotePatterns for `cdn.shopify.com`
+  - Build verified: `npm run typecheck && npm run build` pass
+  - Live fetch: **not yet verified** — requires `.env.local` with `SHOPIFY_STORE_DOMAIN` + `SHOPIFY_STOREFRONT_ACCESS_TOKEN`
 - Phase 3 — Section library (14 launch sections)
 - Phase 4 — Pages & commerce
 - Phase 5 — SEO & performance

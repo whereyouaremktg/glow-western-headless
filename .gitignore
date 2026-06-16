@@ -15,3 +15,7 @@ next-env.d.ts
 # Env
 .env
 .env*.local
+
+# Fonts (add licensed Proxima Nova woff2 when available)
+# public/fonts/proxima-nova-regular.woff2
+.vercel

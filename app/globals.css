@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme {
+  /* Glow palette — MIGRATION-REPORT §2 */
+  --color-blush: #f4d5d2;
+  --color-blush-strong: #e8b5b0;
+  --color-cream: #faf6f1;
+  --color-powder: #b8c5d6;
+  --color-warm-gray: #ebe9e6;
+  --color-ink: #171819;
+  --color-ink-alt: #22292d;
+  --color-muted: #7a7873;
+  --color-sale: #d21404;
+
+  --font-heading: var(--font-heading), ui-serif, Georgia, serif;
+  --font-body: "Proxima Nova", ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-glow-xs: 0.5rem;
+  --spacing-glow-s: 1rem;
+  --spacing-glow-m: 2rem;
+  --spacing-glow-l: 4rem;
+  --spacing-glow-xl: 6rem;
+
+  --radius-button: 0.5rem;
+  --container-glow: 82.5rem;
+
+  --letter-spacing-heading: 0.1em;
+  --letter-spacing-button: 0.14em;
+  --letter-spacing-eyebrow: 0.22em;
+  --letter-spacing-chip: 0.18em;
+
+  --shadow-button: 2px 2px 0 0 var(--color-ink);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: color-mix(in oklab, var(--color-ink) 15%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-cream text-ink antialiased;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: var(--letter-spacing-heading);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+}
+
+@layer components {
+  .container-glow {
+    width: 100%;
+    max-width: var(--container-glow);
+    margin-inline: auto;
+    padding-inline: var(--spacing-glow-s);
+  }
+
+  @media (min-width: 768px) {
+    .container-glow {
+      padding-inline: var(--spacing-glow-m);
+    }
+  }
+
+  .section-padding {
+    padding-block: var(--spacing-glow-xl);
+  }
+
+  .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: var(--letter-spacing-heading);
+    text-transform: uppercase;
+  }
+
+  .font-eyebrow {
+    font-family: var(--font-body);
+    letter-spacing: var(--letter-spacing-eyebrow);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .font-chip {
+    font-family: var(--font-body);
+    letter-spacing: var(--letter-spacing-chip);
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+  }
+
+  .btn-glow {
+    font-family: var(--font-heading);
+    letter-spacing: var(--letter-spacing-button);
+    text-transform: uppercase;
+    font-style: italic;
+    border-radius: var(--radius-button);
+    border: 2px solid var(--color-ink);
+    box-shadow: var(--shadow-button);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .btn-glow-primary {
+    background-color: var(--color-blush);
+    color: var(--color-ink);
+  }
+
+  .btn-glow-primary:hover {
+    background-color: var(--color-blush-strong);
+  }
+
+  .btn-glow-secondary {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  .btn-glow-secondary:hover {
+    background-color: var(--color-warm-gray);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
