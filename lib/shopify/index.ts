@@ -1,9 +1,16 @@
 import { shopifyFetch } from "@/lib/shopify/client";
 import {
+  buildProductFilters,
+  handlesToProductQuery,
+  parseCollectionSort,
+} from "@/lib/shopify/collection-utils";
+import {
   isExcludedProduct,
   mapCart,
   mapCollection,
   mapMenu,
+  mapPage,
+  mapPaginatedCollection,
   mapProduct,
   mapProductCard,
 } from "@/lib/shopify/mappers";
@@ -14,12 +21,23 @@ import {
   cartLinesUpdateMutation,
   getCartQuery,
   getCollectionByHandleQuery,
+  getCollectionProductsQuery,
   getFirstProductQuery,
   getMenuQuery,
+  getPageByHandleQuery,
   getProductByHandleQuery,
+  getProductsByQueryQuery,
   getProductsQuery,
+  searchStorefrontQuery,
 } from "@/lib/shopify/queries";
-import type { Cart, CollectionWithProducts, Menu, Product } from "@/types";
+import type {
+  Cart,
+  CollectionWithProducts,
+  PaginatedCollection,
+  Menu,
+  Product,
+  ShopifyPage,
+} from "@/types";
 
 export async function getProduct(handle: string): Promise<Product | null> {
   const data = await shopifyFetch<{ product: Parameters<typeof mapProduct>[0] | null }>({
@@ -45,6 +63,100 @@ export async function getProducts(options?: {
   return data.products.nodes
     .filter((p) => !isExcludedProduct(p.handle))
     .map(mapProductCard);
+}
+
+export async function getCollectionProducts(
+  handle: string,
+  options?: {
+    first?: number;
+    after?: string;
+    sort?: string;
+    availability?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    filterInputs?: string[];
+  },
+): Promise<PaginatedCollection | null> {
+  const { sortKey, reverse } = parseCollectionSort(options?.sort);
+  const filters = buildProductFilters({
+    availability: options?.availability,
+    minPrice: options?.minPrice,
+    maxPrice: options?.maxPrice,
+    filterInputs: options?.filterInputs,
+  });
+
+  const data = await shopifyFetch<{
+    collection: Parameters<typeof mapPaginatedCollection>[0] | null;
+  }>({
+    query: getCollectionProductsQuery,
+    variables: {
+      handle,
+      first: options?.first ?? 24,
+      after: options?.after ?? null,
+      sortKey,
+      reverse,
+      filters: filters.length ? filters : null,
+    },
+    tags: [`collection-${handle}`],
+  });
+
+  if (!data.collection) return null;
+  return mapPaginatedCollection(data.collection);
+}
+
+export async function searchStorefront(query: string, first = 6): Promise<{
+  products: Product[];
+  collections: { handle: string; title: string }[];
+}> {
+  const data = await shopifyFetch<{
+    search: {
+      nodes: (
+        | Parameters<typeof mapProductCard>[0]
+        | { id: string; handle: string; title: string }
+      )[];
+    };
+  }>({
+    query: searchStorefrontQuery,
+    variables: { query, first },
+    cache: "no-store",
+  });
+
+  const products: Product[] = [];
+  const collections: { handle: string; title: string }[] = [];
+
+  for (const node of data.search.nodes) {
+    if ("priceRange" in node) {
+      if (!isExcludedProduct(node.handle)) products.push(mapProductCard(node));
+    } else if ("handle" in node && "title" in node) {
+      collections.push({ handle: node.handle, title: node.title });
+    }
+  }
+
+  return { products, collections };
+}
+
+export async function getProductsByHandles(handles: string[]): Promise<Product[]> {
+  if (!handles.length) return [];
+  const data = await shopifyFetch<{ products: { nodes: Parameters<typeof mapProductCard>[0][] } }>({
+    query: getProductsByQueryQuery,
+    variables: { first: handles.length, query: handlesToProductQuery(handles) },
+    tags: ["products"],
+  });
+
+  return data.products.nodes
+    .filter((p) => !isExcludedProduct(p.handle))
+    .map(mapProductCard);
+}
+
+export async function getPage(handle: string): Promise<ShopifyPage | null> {
+  const data = await shopifyFetch<{ page: Parameters<typeof mapPage>[0] | null }>({
+    query: getPageByHandleQuery,
+    variables: { handle },
+    tags: [`page-${handle}`],
+  });
+
+  if (!data.page) return null;
+  return mapPage(data.page);
 }
 
 export async function getCollection(

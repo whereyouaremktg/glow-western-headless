@@ -3,12 +3,16 @@ import type {
   Cart,
   CartLine,
   Collection,
+  FilterValue,
   Menu,
   MenuItem,
   Money,
+  PaginatedCollection,
   Product,
+  ProductFilterGroup,
   ProductVariant,
   ShopifyImage,
+  ShopifyPage,
   SiblingProduct,
 } from "@/types";
 
@@ -297,4 +301,75 @@ export function mapMenu(raw: { items: RawMenuItem[] }): Menu {
 
 export function isExcludedProduct(handle: string): boolean {
   return (commerceConfig.excludedProductHandles as readonly string[]).includes(handle);
+}
+
+interface RawFilterValue {
+  id: string;
+  label: string;
+  count: number;
+  input: string;
+}
+
+interface RawFilterGroup {
+  id: string;
+  label: string;
+  type: string;
+  values: RawFilterValue[];
+}
+
+function mapFilterValue(value: RawFilterValue): FilterValue {
+  return {
+    id: value.id,
+    label: value.label,
+    count: value.count,
+    input: value.input,
+  };
+}
+
+function mapFilterGroup(group: RawFilterGroup): ProductFilterGroup {
+  return {
+    id: group.id,
+    label: group.label,
+    type: group.type,
+    values: group.values.map(mapFilterValue),
+  };
+}
+
+export function mapPaginatedCollection(
+  raw: RawCollection & {
+    products: {
+      filters: RawFilterGroup[];
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      nodes: RawProductBase[];
+    };
+  },
+): PaginatedCollection {
+  return {
+    ...mapCollection(raw),
+    products: raw.products.nodes
+      .filter((p) => !isExcludedProduct(p.handle))
+      .map(mapProductCard),
+    filters: raw.products.filters.map(mapFilterGroup),
+    pageInfo: raw.products.pageInfo,
+  };
+}
+
+interface RawPage {
+  id: string;
+  handle: string;
+  title: string;
+  body: string;
+  bodySummary: string;
+  seo?: { title: string | null; description: string | null };
+}
+
+export function mapPage(raw: RawPage): ShopifyPage {
+  return {
+    id: raw.id,
+    handle: raw.handle,
+    title: raw.title,
+    body: raw.body,
+    bodySummary: raw.bodySummary,
+    seo: raw.seo ?? { title: null, description: null },
+  };
 }

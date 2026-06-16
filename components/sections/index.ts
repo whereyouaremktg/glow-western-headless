@@ -1,0 +1,15 @@
+export { SectionRenderer } from "./section-renderer";
+export { BenefitsGrid } from "./benefits-grid";
+export { BeforeAfter } from "./before-after";
+export { CollectionGrid } from "./collection-grid";
+export { EmailCapture } from "./email-capture";
+export { FAQ } from "./faq";
+export { FeaturedProduct } from "./featured-product";
+export { Footer } from "./footer";
+export { FounderStory } from "./founder-story";
+export { Guarantee } from "./guarantee";
+export { Hero } from "./hero";
+export { ReviewCarousel } from "./review-carousel";
+export { SplitHero } from "./split-hero";
+export { Testimonials } from "./testimonials";
+export { VideoHero } from "./video-hero";

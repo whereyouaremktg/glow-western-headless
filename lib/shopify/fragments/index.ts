@@ -1,3 +1,4 @@
+/** Base fragments — include once per query */
 export const imageFragment = /* GraphQL */ `
   fragment ImageFields on Image {
     url
@@ -13,6 +14,13 @@ export const moneyFragment = /* GraphQL */ `
     currencyCode
   }
 `;
+
+export const baseFragments = /* GraphQL */ `
+  ${imageFragment}
+  ${moneyFragment}
+`;
+
+/** Entity fragments — do not embed base fragments (composed at query level) */
 
 export const productVariantFragment = /* GraphQL */ `
   fragment ProductVariantFields on ProductVariant {
@@ -35,8 +43,6 @@ export const productVariantFragment = /* GraphQL */ `
       ...ImageFields
     }
   }
-  ${moneyFragment}
-  ${imageFragment}
 `;
 
 export const productCardFragment = /* GraphQL */ `
@@ -108,8 +114,6 @@ export const productCardFragment = /* GraphQL */ `
       }
     }
   }
-  ${moneyFragment}
-  ${imageFragment}
 `;
 
 export const productFragment = /* GraphQL */ `
@@ -213,9 +217,6 @@ export const productFragment = /* GraphQL */ `
       }
     }
   }
-  ${moneyFragment}
-  ${imageFragment}
-  ${productVariantFragment}
 `;
 
 export const collectionFragment = /* GraphQL */ `
@@ -232,7 +233,6 @@ export const collectionFragment = /* GraphQL */ `
       description
     }
   }
-  ${imageFragment}
 `;
 
 export const cartFragment = /* GraphQL */ `
@@ -281,8 +281,6 @@ export const cartFragment = /* GraphQL */ `
       }
     }
   }
-  ${moneyFragment}
-  ${imageFragment}
 `;
 
 export const menuFragment = /* GraphQL */ `

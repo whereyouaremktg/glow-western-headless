@@ -84,6 +84,35 @@ export interface CollectionWithProducts extends Collection {
   products: Product[];
 }
 
+export interface FilterValue {
+  id: string;
+  label: string;
+  count: number;
+  input: string;
+}
+
+export interface ProductFilterGroup {
+  id: string;
+  label: string;
+  type: string;
+  values: FilterValue[];
+}
+
+export interface PaginatedCollection extends Collection {
+  products: Product[];
+  filters: ProductFilterGroup[];
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+}
+
+export interface ShopifyPage {
+  id: string;
+  handle: string;
+  title: string;
+  body: string;
+  bodySummary: string;
+  seo: { title: string | null; description: string | null };
+}
+
 // ---- Cart ----
 
 export interface CartLine {
@@ -189,7 +218,7 @@ export interface HeroProps extends SectionBase {
   ctas: CTA[];
   image: ResponsiveImage;
   height: "full" | "large" | "medium";
-  align: "left" | "center";
+  align: "left" | "center" | "right";
 }
 
 export interface SplitHeroProps extends SectionBase {

@@ -3,7 +3,7 @@
 **Source of truth for this project.** Update at every phase boundary.
 Companion doc: `MIGRATION-REPORT.md` (Phase 1 theme audit — old-theme inventory & classification).
 
-**Status:** Phase 2 complete (foundation). App scaffolded; Shopify client + UI primitives ready. Live API verification pending `.env.local` credentials.
+**Status:** Phase 4 complete (pages & commerce). Phase 5 next.
 
 ---
 
@@ -270,9 +270,25 @@ creator/affiliate pages, blog, shoppable look, routine grid, press logos, UGC gr
   - Foundation page at `/` showcases tokens, primitives, and Shopify connection status
   - `.env.example` created; `next.config.ts` images.remotePatterns for `cdn.shopify.com`
   - Build verified: `npm run typecheck && npm run build` pass
-  - Live fetch: **not yet verified** — requires `.env.local` with `SHOPIFY_STORE_DOMAIN` + `SHOPIFY_STOREFRONT_ACCESS_TOKEN`
-- Phase 3 — Section library (14 launch sections)
-- Phase 4 — Pages & commerce
+  - Live fetch verified against glow-beauty-hair.myshopify.com
+- **Phase 3 ✅** — Section library (14 launch sections):
+  - `components/sections/` — Hero, Split Hero, Video Hero, Benefits Grid, Before/After, Testimonials, Review Carousel, FAQ (+ FAQPage JSON-LD), Founder Story, Featured Product, Collection Grid, Guarantee, Email Capture, Footer
+  - Shared primitives: `SectionShell`, `ResponsiveMedia`, `CtaGroup`, `SectionHeader`, `MotionSection` (Framer Motion)
+  - `lib/content/home.ts` — typed fallback copy; `getHomePageSections()` merges live product/collection/menu data
+  - `SectionRenderer` + homepage wired at `/`
+  - Client components (justified): Before/After slider, testimonial/review carousels, email capture form, motion wrapper
+  - Review Carousel section built; populated when reviews provider data available (empty until Loox/API decision)
+- **Phase 4 ✅** — Pages & commerce:
+  - Site chrome: `AnnouncementBar`, `Header` (mobile nav + predictive search overlay), `Footer` via `SiteShell`
+  - Cart: `glow_cart_id` httpOnly cookie, server actions, `CartProvider` + `CartDrawer` (optimistic updates, free-shipping bar → `checkoutUrl`)
+  - `/products/[handle]` — gallery (thumbs/lightbox/mobile swipe), variant selector + siblings, sticky mobile ATC, callouts/accordions/FAQ, cross-sell, Product + Breadcrumb JSON-LD
+  - `/collections/[handle]` — hero, Storefront filters/sort (URL state), load-more pagination
+  - `/search` + `/api/search` predictive search
+  - `/cart` fallback page
+  - `/pages/[handle]` — Shopify content pages
+  - `/account/*` — Customer Account API OAuth scaffold (login/callback/logout routes; orders/addresses shells; requires env vars)
+  - Extended Storefront queries: collection filters, search, pages, cross-sell by handle
+  - Build verified: `npm run typecheck && npm run build` pass
 - Phase 5 — SEO & performance
 - Phase 6 — Deploy & `PARITY-REPORT.md`
 
